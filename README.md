@@ -1,21 +1,21 @@
 # Sistema de Portaria Residencial
 
-Sistema web de gerenciamento de portaria desenvolvido do zero para uma empresa do ramo de administração de condomínios.
+Sistema web de gerenciamento de portaria desenvolvido do zero para uma empresa de administração de condomínios.
 
-O sistema foi criado para uso real em operações de portaria, permitindo organizar o controle de moradores, visitantes, veículos, encomendas e comunicação com residentes. Atualmente está em funcionamento e sendo utilizado pelo cliente.
+A aplicação foi criada para centralizar as rotinas da portaria, permitindo o controle de moradores, visitantes, veículos, encomendas e comunicação com residentes. Atualmente está em produção e sendo utilizada pelo cliente.
 
 ## Sobre o projeto
 
-A aplicação foi desenvolvida como um projeto freelance completo, envolvendo desde a concepção da solução até a implementação e disponibilização em ambiente de produção.
+Este projeto foi desenvolvido como uma solução freelance completa, envolvendo desde o entendimento da necessidade do cliente até a implementação e disponibilização da aplicação em ambiente de produção.
 
-O objetivo foi substituir controles manuais e centralizar as principais rotinas da portaria em uma plataforma web.
+O objetivo foi substituir controles manuais e reunir as principais operações da portaria em uma única plataforma web, facilitando a organização das informações e o gerenciamento das atividades do condomínio.
 
 ## Funcionalidades
 
 - Cadastro e gerenciamento de blocos e apartamentos
 - Cadastro de moradores
 - Controle de visitantes
-- Registro de entrada através de QR Code para visitantes
+- Registro de entrada através de QR Code
 - Gerenciamento de veículos e vagas
 - Controle de encomendas
 - Área do morador
@@ -25,28 +25,40 @@ O objetivo foi substituir controles manuais e centralizar as principais rotinas 
 
 ## Tecnologias utilizadas
 
+### Backend
 - Python
 - Flask
+
+### Banco de dados
 - PostgreSQL
+- SQL
+
+### Frontend
 - HTML5
 - CSS3
 - JavaScript
+
+### Ferramentas e serviços
 - Git/GitHub
 - Render (deploy)
+- Variáveis de ambiente
 
 ## Desenvolvimento
 
 Projeto desenvolvido individualmente, incluindo:
 
-- Modelagem do banco de dados
+- Levantamento das necessidades do cliente
+- Modelagem e estruturação do banco de dados
 - Desenvolvimento do backend
-- Criação das interfaces
+- Criação das interfaces da aplicação
 - Integração com serviços externos
-- Deploy e configuração do ambiente
+- Configuração e publicação em ambiente de produção
 
 ## Objetivo profissional
 
-Este projeto demonstra experiência prática no desenvolvimento de aplicações web completas, desde a análise da necessidade do cliente até a entrega de uma solução utilizada em ambiente real.
+Este projeto representa minha experiência prática no desenvolvimento de uma aplicação web completa, desde a ideia inicial até a entrega de uma solução utilizada em ambiente real.
+
+O projeto demonstra conhecimentos em desenvolvimento full-stack, banco de dados, integração de serviços e publicação de aplicações.
 
 ## Screenshots
 
@@ -54,8 +66,8 @@ Este projeto demonstra experiência prática no desenvolvimento de aplicações 
 
 ## Deploy
 
-A aplicação foi configurada para execução em ambiente de produção, utilizando variáveis de ambiente para informações sensíveis e integração com banco de dados.
+A aplicação foi configurada para execução em ambiente de produção, utilizando variáveis de ambiente para armazenamento de informações sensíveis e conexão com o banco de dados.
 
 ## Observações
 
-Por se tratar de um sistema desenvolvido para uso real por cliente, informações sensíveis e dados internos não são disponibilizados publicamente.
+Por se tratar de um sistema desenvolvido para uso real por um cliente, informações sensíveis e dados internos não são disponibilizados publicamente.
