@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold" style="color: var(--verde-escuro)">
+        <i class="bi bi-box-seam me-2"></i>Encomendas
+    </h4>
+    <a href="/encomendas/nova" class="btn btn-verde"><i class="bi bi-plus-lg me-1"></i> Nova Encomenda</a>
+</div>
+
+<!-- FILTROS -->
+<div class="card mb-3">
+    <div class="card-body py-3 px-4">
+        <div class="d-flex gap-3 flex-wrap align-items-center">
+            <span class="fw-semibold" style="color: var(--verde-escuro)">Filtrar:</span>
+            <a href="/encomendas" class="btn btn-sm {{ 'btn-verde' if not filtro else 'btn-outline-secondary' }}">Todas</a>
+            <a href="/encomendas?status=pendente" class="btn btn-sm {{ 'btn-verde' if filtro == 'pendente' else 'btn-outline-secondary' }}">
+                <i class="bi bi-clock me-1"></i> Pendentes
+            </a>
+            <a href="/encomendas?status=entregue" class="btn btn-sm {{ 'btn-verde' if filtro == 'entregue' else 'btn-outline-secondary' }}">
+                <i class="bi bi-check2-circle me-1"></i> Entregues
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- PESQUISA -->
+<div class="mb-3">
+    <div class="input-group">
+        <span class="input-group-text" style="background: rgba(255,255,255,0.6); border: 1px solid rgba(31,77,53,0.2); border-right: none;">
+            <i class="bi bi-search" style="color: var(--verde-medio)"></i>
+        </span>
+        <input type="text" id="campoPesquisa" class="form-control"
+               placeholder="Pesquisar por morador, remetente ou descrição..."
+               style="border-left: none; background: rgba(255,255,255,0.6);">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header-verde">Lista de Encomendas</div>
+    <div class="card-body p-0" style="max-height: 650px; overflow-y: auto;">
+        <div class="table-responsive">
+            <table class="table mb-0" id="tabelaEncomendas">
+                <thead>
+                    <tr>
+                        <th>Morador</th>
+                        <th>Bloco/AP</th>
+                        <th>Descrição</th>
+                        <th>Remetente</th>
+                        <th>Recebido em</th>
+                        <th>Foto</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in encomendas %}
+                    <tr>
+                        <td>{{ e[1] }}</td>
+                        <td>{{ e[7] }} / AP {{ e[8] }}</td>
+                        <td>{{ e[2] }}</td>
+                        <td>{{ e[3] or '—' }}</td>
+                        <td>{{ e[4] }}</td>
+
+                        <!-- FOTO -->
+                        <td>
+                            {% if e[9] %}
+                            <a href="/encomendas/foto/{{ e[0] }}" target="_blank" title="Ver foto"
+                               style="color: var(--verde-medio); text-decoration: none;">
+                                <i class="bi bi-image" style="font-size: 1.2rem;"></i>
+                            </a>
+                            {% else %}
+                            <span style="color: rgba(0,0,0,0.25);">—</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- STATUS -->
+                        <td>
+                            {% if e[6] == 'pendente' %}
+                            <span class="badge" style="background: rgba(245,158,11,0.15); color: #b45309; border: 1px solid rgba(245,158,11,0.3); border-radius: 20px; padding: 4px 12px;">
+                                <i class="bi bi-clock me-1"></i>Pendente
+                            </span>
+                            {% else %}
+                            <span class="badge" style="background: rgba(34,197,94,0.15); color: #15803d; border: 1px solid rgba(34,197,94,0.3); border-radius: 20px; padding: 4px 12px;">
+                                <i class="bi bi-check2-circle me-1"></i>Entregue
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- AÇÕES -->
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                {% if e[6] == 'pendente' %}
+                                <a href="/encomendas/entregar/{{ e[0] }}" class="btn btn-sm btn-verde"
+                                   onclick="return confirm('Confirmar entrega?')">Entregar</a>
+                                <a href="/encomendas/notificar/{{ e[0] }}" class="btn btn-sm"
+                                   style="background: rgba(37,211,102,0.15); color: #128C7E;
+                                          border: 1px solid rgba(37,211,102,0.3); border-radius: 8px;"
+                                   onclick="return confirm('Notificar morador pelo WhatsApp?')">
+                                    <i class="bi bi-whatsapp"></i> Notificar
+                                </a>
+                                {% endif %}
+                                {% if e[9] %}
+                                <a href="/encomendas/apagar-foto/{{ e[0] }}" class="btn btn-sm"
+                                   style="background: rgba(245,158,11,0.15); color: #b45309;
+                                          border: 1px solid rgba(245,158,11,0.3); border-radius: 8px;"
+                                   title="Apagar foto"
+                                   onclick="return confirm('Apagar a foto desta encomenda?')">
+                                    <i class="bi bi-trash"></i> Foto
+                                </a>
+                                {% endif %}
+                                <a href="/encomendas/excluir/{{ e[0] }}" class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Excluir esta encomenda?')">Excluir</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="8" class="text-center py-4 text-muted">Nenhuma encomenda registrada.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="semResultados" class="text-center py-4 text-muted d-none">Nenhuma encomenda encontrada.</div>
+    </div>
+</div>
+
+<!-- MODAL DE FOTO -->
+<div id="modalFoto" onclick="fecharModal()"
+     style="display:none; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,0.75); backdrop-filter:blur(4px);
+            align-items:center; justify-content:center;">
+    <img id="modalImg"
+         style="max-width:90vw; max-height:88vh; border-radius:14px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+</div>
+
+<script>
+const campo = document.getElementById('campoPesquisa');
+const linhas = document.querySelectorAll('#tabelaEncomendas tbody tr');
+const semResultados = document.getElementById('semResultados');
+let timeout;
+campo.addEventListener('input', function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        const termo = campo.value.toLowerCase();
+        let visiveis = 0;
+        linhas.forEach(row => {
+            const visivel = row.textContent.toLowerCase().includes(termo);
+            row.style.display = visivel ? '' : 'none';
+            if (visivel) visiveis++;
+        });
+        semResultados.classList.toggle('d-none', visiveis > 0);
+    }, 150);
+});
+
+document.querySelectorAll('a[href^="/encomendas/foto/"]').forEach(link => {
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const modal = document.getElementById('modalFoto');
+        document.getElementById('modalImg').src = this.href;
+        modal.style.display = 'flex';
+    });
+});
+
+function fecharModal() {
+    document.getElementById('modalFoto').style.display = 'none';
+    document.getElementById('modalImg').src = '';
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fecharModal();
+});
+</script>
+{% endblock %}

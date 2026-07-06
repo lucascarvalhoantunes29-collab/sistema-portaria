@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<h4 class="fw-bold mb-4" style="color: var(--verde-escuro)">
+    {{ 'Editar' if morador else 'Novo' }} Morador
+</h4>
+
+<div class="card">
+    <div class="card-body p-4" style="max-width: 500px">
+        <form method="POST">
+
+            <div class="mb-3">
+                <label class="form-label">Nome completo</label>
+                <input
+                    type="text"
+                    name="nome"
+                    class="form-control"
+                    value="{{ morador[1] if morador else '' }}"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Telefone</label>
+                <input
+                    type="text"
+                    name="telefone"
+                    class="form-control"
+                    value="{{ morador[2] if morador else '' }}"
+                >
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ morador[3] if morador else '' }}"
+                >
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Bloco</label>
+                <select name="bloco_id" class="form-select" id="selectBloco" required>
+                    <option value="">Selecione um bloco</option>
+                    {% for bloco in blocos %}
+                    <option
+                        value="{{ bloco[0] }}"
+                        {{ 'selected' if morador and morador[6] == bloco[0] else '' }}
+                    >
+                        {{ bloco[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Apartamento</label>
+                <select name="apartamento_id" class="form-select" id="selectApartamento" required>
+                    <option value="">Selecione um apartamento</option>
+                    {% for ap in apartamentos %}
+                    <option
+                        value="{{ ap[0] }}"
+                        data-bloco="{{ ap[2] }}"
+                        {{ 'selected' if morador and morador[4] == ap[1] else '' }}
+                    >
+                        Bloco {{ ap[2] }} - Apt {{ ap[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-verde">
+                    Salvar
+                </button>
+
+                <a href="/moradores" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const blocoSelect = document.getElementById('selectBloco');
+    const aptSelect = document.getElementById('selectApartamento');
+    const options = Array.from(aptSelect.options);
+
+    function filtrarApartamentos() {
+        const blocoTexto = blocoSelect.options[blocoSelect.selectedIndex].text.trim();
+
+        options.forEach((option, index) => {
+            if (index === 0) return;
+
+            const blocoOption = option.getAttribute('data-bloco');
+
+            if (!blocoSelect.value || blocoOption === blocoTexto) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+
+        aptSelect.value = '';
+    }
+
+    blocoSelect.addEventListener('change', filtrarApartamentos);
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h4 class="fw-bold mb-4" style="color: var(--verde-escuro)">
+    {{ 'Editar' if apartamento else 'Novo' }} Apartamento
+</h4>
+
+<div class="card">
+    <div class="card-body p-4" style="max-width: 400px">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Número do Apartamento</label>
+                <input type="text" name="numero" class="form-control"
+                       value="{{ apartamento[1] if apartamento else '' }}"
+                       placeholder="Ex: 101, 202..." required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Bloco</label>
+                <select name="bloco_id" class="form-select" required>
+                    <option value="">Selecione um bloco</option>
+                    {% for bloco in blocos %}
+                    <option value="{{ bloco[0] }}"
+                        {{ 'selected' if apartamento and apartamento[3] == bloco[0] else '' }}>
+                        {{ bloco[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-verde">Salvar</button>
+                <a href="/apartamentos" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

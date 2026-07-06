@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='img/logo.jpeg') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recanto da Figueira</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --verde-escuro: #1f4d35;
+            --verde-medio: #2d6a4f;
+            --verde-claro: #74c69d;
+            --verde-suave: #eaf4ee;
+            --branco: #ffffff;
+            --cinza-claro: #f5f7f5;
+            --texto: #1a2e23;
+            --sidebar-width: 260px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cinza-claro);
+            color: var(--texto);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.15); }
+        }
+
+        .page-body { animation: fadeIn 0.4s ease both; }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--verde-escuro);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 200;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.aberta { transform: translateX(0); }
+
+        .sidebar-logo {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo img { width: 50px; flex-shrink: 0; border-radius: 8px; }
+
+        .sidebar-logo-texto h6 {
+            color: var(--branco);
+            font-family: 'Lora', serif;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .sidebar-logo-texto small {
+            color: var(--verde-claro);
+            font-size: 0.65rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar nav { padding: 20px 12px; flex: 1; overflow-y: auto; }
+
+        .nav-label {
+            color: var(--verde-claro);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 12px 12px 6px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+            transition: padding-left 0.2s ease, background 0.2s ease, color 0.2s ease;
+            position: relative;
+        }
+
+        .sidebar a::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            width: 3px; height: 100%;
+            background: var(--verde-claro);
+            border-radius: 0 4px 4px 0;
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar a:hover {
+            padding-left: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .sidebar a:hover::after { transform: scaleY(1); }
+
+        .sidebar a.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding-left: 20px;
+        }
+
+        .sidebar a.active::after { transform: scaleY(1); }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.72rem;
+            text-align: center;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 150;
+            backdrop-filter: blur(2px);
+        }
+        .overlay.ativo { display: block; }
+
+        /* ── CONTEÚDO ── */
+        .main-content {
+            margin-left: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("{{ url_for('static', filename='img/fundo_interno.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(31,77,53,0.1);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+
+        .btn-hamburguer {
+            background: none;
+            border: none;
+            color: var(--verde-escuro);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-hamburguer:hover {
+            background: var(--verde-suave);
+            transform: scale(1.1);
+        }
+
+        .topbar h5 {
+            font-family: 'Lora', serif;
+            color: var(--verde-escuro);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+        .badge-online {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(116,198,157,0.15);
+            border: 1px solid rgba(116,198,157,0.4);
+            color: var(--verde-medio);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 20px;
+        }
+
+        .badge-online .dot {
+            width: 7px; height: 7px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-sair {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(31,77,53,0.08);
+            color: var(--verde-escuro);
+            border: 1px solid rgba(31,77,53,0.2);
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sair:hover {
+            background: var(--verde-escuro);
+            color: white;
+            border-color: var(--verde-escuro);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(31,77,53,0.3);
+        }
+
+        /* ── PAGE BODY ── */
+        .page-body {
+            padding: 32px;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            background-image: url("{{ url_for('static', filename='img/fundo_interno.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: rgba(255,255,255,0.15);
+            background-blend-mode: lighten;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            overflow: hidden;
+            animation: fadeSlideUp 0.4s ease both;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.12);
+        }
+
+        .card-header-verde {
+            background: linear-gradient(135deg, var(--verde-medio), var(--verde-escuro));
+            color: white;
+            padding: 14px 20px;
+            font-family: 'Lora', serif;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── BOTÕES ── */
+        .btn-verde {
+            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 20px;
+            box-shadow: 0 2px 8px rgba(45,106,79,0.3);
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .btn-verde:hover {
+            background: var(--verde-escuro);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(45,106,79,0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #2d6a4f, #40916c) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(45,106,79,0.3) !important;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #1f4d35, #2d6a4f) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(45,106,79,0.4) !important;
+        }
+
+        .btn-danger {
+            background: rgba(180,40,40,0.7) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(180,40,40,0.2) !important;
+            backdrop-filter: blur(4px) !important;
+        }
+
+        .btn-danger:hover {
+            background: rgba(150,20,20,0.9) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(180,40,40,0.35) !important;
+        }
+
+        /* ── TABELAS ── */
+        .table { border-collapse: separate; border-spacing: 0; }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--verde-medio), var(--verde-escuro));
+            color: white;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border: none;
+            font-weight: 600;
+            padding: 14px 16px;
+        }
+
+        .table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(31,77,53,0.07);
+            vertical-align: middle;
+            background: rgba(255,255,255,0.85);
+            transition: background 0.15s ease;
+        }
+
+        .table tbody tr:last-child td { border-bottom: none; }
+        .table tbody tr:hover td { background: rgba(116,198,157,0.12); }
+
+        /* ── FORMULÁRIOS ── */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid rgba(31,77,53,0.2);
+            padding: 10px 14px;
+            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.7);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--verde-claro);
+            box-shadow: 0 0 0 3px rgba(116,198,157,0.2);
+            background: rgba(255,255,255,0.95);
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--verde-escuro);
+            margin-bottom: 6px;
+        }
+
+        .input-group .input-group-text {
+            background: rgba(255,255,255,0.5);
+            border: 1px solid rgba(31,77,53,0.2);
+            border-right: none;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 768px) {
+            body { display: block; }
+
+            .main-content {
+                margin-left: 0 !important;
+                background-image: url("/static/img/fundo_mobile.png");
+                background-attachment: scroll;
+            }
+
+            .topbar { padding: 10px 16px; }
+            .topbar h5 { font-size: 0.95rem; }
+
+            .page-body {
+                padding: 16px;
+                background-image: url("/static/img/fundo_mobile.png");
+                background-size: cover;
+                background-position: top center;
+                background-color: transparent;
+                background-blend-mode: normal;
+                background-attachment: scroll;
+            }
+
+            .card { border-radius: 12px; }
+            .table-responsive { overflow-x: auto; }
+            .badge-online span { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="Logo">
+        <div class="sidebar-logo-texto">
+            <h6>Recanto da Figueira</h6>
+            <small>Eco Residencial</small>
+        </div>
+    </div>
+    <nav>
+        <div class="nav-label">Geral</div>
+        <a href="/" class="{% if request.path == '/' %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-house-door"></i> Início
+        </a>
+        <div class="nav-label">Cadastros</div>
+        <a href="/blocos" class="{% if '/blocos' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-building"></i> Blocos
+        </a>
+        <a href="/apartamentos" class="{% if '/apartamentos' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-door-open"></i> Apartamentos
+        </a>
+        <a href="/moradores" class="{% if '/moradores' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-people"></i> Moradores
+        </a>
+        <a href="/visitantes" class="{% if '/visitantes' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-person-badge"></i> Visitantes
+        </a>
+        <a href="/encomendas" class="{% if '/encomendas' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-box-seam"></i> Encomendas
+        </a>
+        <a href="/veiculos" class="{% if '/veiculos' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-car-front"></i> Veículos
+        </a>
+        <a href="/vagas" class="{% if '/vagas' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-p-square"></i> Vagas
+        </a>
+        <div class="nav-label">Moradores</div>
+        <a href="/contas-moradores" class="{% if '/contas-moradores' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-person-lock"></i> Contas Moradores
+        </a>   
+        <a href="/qrcode-portaria" class="{% if '/qrcode-portaria' in request.path %}active{% endif %}" onclick="fecharMenu()">
+            <i class="bi bi-whatsapp"></i> WhatsApp
+        </a>
+    </nav>
+    <div class="sidebar-footer">Sistema da Portaria © 2026</div>
+</aside>
+
+<div class="main-content" id="mainContent">
+    <div class="topbar">
+        <div class="topbar-left">
+            <button class="btn-hamburguer" onclick="toggleMenu()">
+                <i class="bi bi-list"></i>
+            </button>
+            <h5><i class="bi bi-tree me-2"></i>Portal do Porteiro</h5>
+        </div>
+        <div class="topbar-right">
+            <div class="badge-online">
+                <span class="dot"></span>
+                <span>Sistema Online</span>
+            </div>
+            <a href="/logout" class="btn-sair">
+                <i class="bi bi-box-arrow-right"></i>
+                Sair
+            </a>
+        </div>
+    </div>
+    <div class="page-body">
+        {% block conteudo %}{% endblock %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function toggleMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    sidebar.classList.toggle('aberta');
+    overlay.classList.toggle('ativo');
+}
+
+function fecharMenu() {
+    document.getElementById('sidebar').classList.remove('aberta');
+    document.getElementById('overlay').classList.remove('ativo');
+}
+</script>
+
+</body>
+</html>

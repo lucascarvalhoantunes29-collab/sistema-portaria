@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="icon" type="image/jpeg" href="/static/img/logo.jpeg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Área do Morador — Recanto da Figueira</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-image: url("/static/img/fundo.jpg");
+            background-size: cover; background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        body::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.25); }
+        .topbar {
+            position: relative; z-index: 10;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(16px);
+            padding: 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .topbar h5 { font-family: 'Lora', serif; color: #1f4d35; margin: 0; font-size: 1.1rem; }
+        .btn-sair {
+            background: rgba(31,77,53,0.08); color: #1f4d35;
+            border: 1px solid rgba(31,77,53,0.2); border-radius: 10px;
+            padding: 6px 14px; font-size: 0.82rem; font-weight: 500;
+            text-decoration: none; transition: 0.2s;
+        }
+        .btn-sair:hover { background: #1f4d35; color: white; }
+        .content {
+            position: relative; z-index: 2;
+            padding: 40px 20px; max-width: 500px; margin: 0 auto;
+        }
+        .card-area {
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 18px; padding: 32px;
+            text-align: center;
+            animation: fadeUp 0.5s ease both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .card-area h4 { font-family: 'Lora', serif; color: white; margin-bottom: 6px; }
+        .card-area p { color: rgba(255,255,255,0.8); margin-bottom: 28px; }
+        .btn-qr {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            color: white; border: none; border-radius: 12px;
+            padding: 14px 28px; font-size: 1rem; font-weight: 600;
+            text-decoration: none; transition: 0.2s;
+            box-shadow: 0 4px 16px rgba(45,106,79,0.35);
+        }
+        .btn-qr:hover { background: #1f4d35; color: white; transform: translateY(-2px); }
+        @media (max-width: 768px) {
+            body { background-image: url("/static/img/fundo_mobile.png"); background-attachment: scroll; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h5>🌳 Recanto da Figueira</h5>
+        <a href="/morador/logout" class="btn-sair"><i class="bi bi-box-arrow-right"></i> Sair</a>
+    </div>
+    <div class="content">
+        <div class="card-area">
+            <h4>Olá, {{ session['morador_nome'] }}! 👋</h4>
+            <p>Bloco {{ session['morador_bloco'] }} — AP {{ session['morador_ap'] }}</p>
+            <a href="/morador/gerar-qr" class="btn-qr">
+                <i class="bi bi-qr-code"></i> Gerar QR Code para Visitante
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h4 class="fw-bold mb-4" style="color: var(--verde-escuro)">
+    <i class="bi bi-person-lock me-2"></i>Nova Conta de Morador
+</h4>
+
+<div class="card">
+    <div class="card-body p-4" style="max-width: 500px">
+
+        {% if erro %}
+        <div class="alert py-2 px-3 mb-3"
+             style="background: rgba(180,40,40,0.1); border: 1px solid rgba(180,40,40,0.3);
+                    color: #7f1d1d; border-radius: 10px; font-size: 0.85rem;">
+            <i class="bi bi-exclamation-triangle me-1"></i> {{ erro }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Morador</label>
+                <input type="text" id="campoBusca" class="form-control mb-2"
+                       placeholder="Digite o nome, bloco ou apartamento...">
+                <select name="morador_id" id="selectMorador" class="form-select" required size="6"
+                        style="height: auto;">
+                    {% for m in moradores %}
+                    <option value="{{ m[0] }}"
+                            data-texto="{{ m[1]|lower }} {{ m[3]|lower }} {{ m[2]|lower }}">
+                        {{ m[1] }} — {{ m[3] }} / AP {{ m[2] }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small class="text-muted">Clique no morador para selecionar</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Senha</label>
+                <input type="password" name="senha" class="form-control"
+                       placeholder="Crie uma senha para o morador" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Confirmar senha</label>
+                <input type="password" name="confirmar_senha" class="form-control"
+                       placeholder="Repita a senha" required>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-verde">Criar Conta</button>
+                <a href="/contas-moradores" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('campoBusca').addEventListener('input', function () {
+    const termo = this.value.toLowerCase();
+    document.querySelectorAll('#selectMorador option').forEach(opt => {
+        opt.style.display = opt.getAttribute('data-texto').includes(termo) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="container-fluid">
+
+    <!-- CABEÇALHO -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1" style="color: var(--verde-escuro)">
+            <i class="bi bi-building me-2"></i>Painel da Portaria
+        </h2>
+        <p class="text-muted">Acompanhe rapidamente as informações principais do condomínio.</p>
+    </div>
+
+    <!-- CARDS -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-6 col-lg-3">
+            <div class="glass-card text-center">
+                <i class="bi bi-people fs-2 mb-2" style="color: var(--verde-medio)"></i>
+                <h6 class="text-muted mb-1">Moradores</h6>
+                <h3 class="fw-bold mb-0" style="color: var(--verde-escuro)">{{ total_moradores }}</h3>
+                <small class="text-muted">cadastrados</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="glass-card text-center">
+                <i class="bi bi-person-badge fs-2 mb-2" style="color: var(--verde-medio)"></i>
+                <h6 class="text-muted mb-1">Visitantes</h6>
+                <h3 class="fw-bold mb-0" style="color: var(--verde-escuro)">{{ total_visitantes }}</h3>
+                <small class="text-muted">hoje</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="glass-card text-center">
+                <i class="bi bi-car-front fs-2 mb-2" style="color: var(--verde-medio)"></i>
+                <h6 class="text-muted mb-1">Veículos</h6>
+                <h3 class="fw-bold mb-0" style="color: var(--verde-escuro)">{{ total_veiculos }}</h3>
+                <small class="text-muted">registrados</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="glass-card text-center">
+                <i class="bi bi-p-square fs-2 mb-2" style="color: var(--verde-medio)"></i>
+                <h6 class="text-muted mb-1">Vagas</h6>
+                <h3 class="fw-bold mb-0" style="color: var(--verde-escuro)">{{ vagas_ocupadas }}</h3>
+                <small class="text-muted">ocupadas</small>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AÇÕES + STATUS -->
+    <div class="row g-3">
+
+        <div class="col-12 col-lg-8">
+            <div class="glass-card">
+                <h5 class="fw-bold mb-3" style="color: var(--verde-escuro)">
+                    <i class="bi bi-lightning-charge me-2"></i>Ações rápidas
+                </h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="/visitantes/novo" class="btn btn-verde">
+                        <i class="bi bi-person-plus me-1"></i> Novo Visitante
+                    </a>
+                    <a href="/moradores" class="btn btn-verde">
+                        <i class="bi bi-people me-1"></i> Moradores
+                    </a>
+                    <a href="/veiculos" class="btn btn-verde">
+                        <i class="bi bi-car-front me-1"></i> Veículos
+                    </a>
+                    <a href="/vagas" class="btn btn-verde">
+                        <i class="bi bi-p-square me-1"></i> Vagas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="glass-card">
+                <h5 class="fw-bold mb-3" style="color: var(--verde-escuro)">
+                    <i class="bi bi-activity me-2"></i>Status do Sistema
+                </h5>
+                <p class="mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-circle-fill" style="font-size: 0.6rem; color: #22c55e;"></i>
+                    Portaria Online
+                </p>
+                <p class="mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-car-front" style="color: var(--verde-medio);"></i>
+                    Controle de veículos ativo
+                </p>
+                <p class="mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-people" style="color: var(--verde-medio);"></i>
+                    Cadastro funcionando
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+.glass-card {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h4 class="fw-bold mb-4" style="color: var(--verde-escuro)">
+    {{ 'Editar' if bloco else 'Novo' }} Bloco
+</h4>
+
+<div class="card">
+    <div class="card-body p-4" style="max-width: 400px">
+        <form method="POST">
+            <div class="mb-4">
+                <label class="form-label">Nome do Bloco</label>
+                <input type="text" name="nome" class="form-control"
+                       value="{{ bloco[1] if bloco else '' }}"
+                       placeholder="Ex: Bloco A" required>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-verde">Salvar</button>
+                <a href="/blocos" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold" style="color: var(--verde-escuro)">
+        <i class="bi bi-person-badge me-2"></i>Visitantes
+    </h4>
+    <a href="/visitantes/novo" class="btn btn-verde"><i class="bi bi-plus-lg me-1"></i> Registrar Visita</a>
+</div>
+
+<div class="mb-3">
+    <div class="input-group">
+        <span class="input-group-text" style="background: rgba(255,255,255,0.6); border: 1px solid rgba(31,77,53,0.2); border-right: none;">
+            <i class="bi bi-search" style="color: var(--verde-medio)"></i>
+        </span>
+        <input type="text" id="campoPesquisa" class="form-control"
+               placeholder="Pesquisar por nome, bloco ou apartamento..."
+               style="border-left: none; background: rgba(255,255,255,0.6);">
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header-verde">Registro de Visitantes</div>
+    <div class="card-body p-0" style="max-height: 650px; overflow-y: auto;">
+        <div class="table-responsive">
+            <table class="table mb-0" id="tabelaVisitantes">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Bloco/AP</th>
+                        <th>Data e Hora</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in visitantes %}
+                    <tr>
+                        <td>{{ v[1] }}</td>
+                        <td>{{ v[6] }} / AP {{ v[7] }}</td>
+                        <td>{{ v[4] }}</td>
+                        <td>
+                            <a href="/visitantes/excluir/{{ v[0] }}" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Excluir este registro?')">Excluir</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="text-center py-4 text-muted">Nenhuma visita registrada.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="semResultados" class="text-center py-4 text-muted d-none">Nenhuma visita encontrada.</div>
+    </div>
+</div>
+
+<script>
+const campo = document.getElementById('campoPesquisa');
+const linhas = document.querySelectorAll('#tabelaVisitantes tbody tr');
+const semResultados = document.getElementById('semResultados');
+let timeout;
+campo.addEventListener('input', function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        const termo = campo.value.toLowerCase();
+        let visiveis = 0;
+        linhas.forEach(row => {
+            const visivel = row.textContent.toLowerCase().includes(termo);
+            row.style.display = visivel ? '' : 'none';
+            if (visivel) visiveis++;
+        });
+        semResultados.classList.toggle('d-none', visiveis > 0);
+    }, 150);
+});
+</script>
+{% endblock %}

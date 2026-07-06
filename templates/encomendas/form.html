@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h4 class="fw-bold mb-4" style="color: var(--verde-escuro)">📦 Nova Encomenda</h4>
+
+<div class="card">
+    <div class="card-body p-4" style="max-width: 520px">
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label class="form-label">Morador destinatário</label>
+                <input type="text" id="campoBusca" class="form-control mb-2"
+                       placeholder="Digite o nome, bloco ou apartamento...">
+                <select name="morador_id" id="selectMorador" class="form-select" required size="6"
+                        style="height: auto;">
+                    {% for m in moradores %}
+                    <option value="{{ m[0] }}" data-texto="{{ m[1]|lower }} {{ m[3]|lower }} {{ m[2]|lower }}">
+                        {{ m[1] }} — {{ m[3] }} / AP {{ m[2] }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small class="text-muted">Clique no morador para selecionar</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <input type="text" name="descricao" class="form-control"
+                       placeholder="Ex: Caixa pequena, envelope, etc" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Remetente</label>
+                <input type="text" name="remetente" class="form-control"
+                       placeholder="Ex: Amazon, Correios, Mercado Livre">
+            </div>
+
+            <!-- FOTO DA ENCOMENDA -->
+            <div class="mb-4">
+                <label class="form-label">
+                    Foto da encomenda
+                    <span class="text-muted fw-normal" style="font-size: 0.78rem;">(opcional)</span>
+                </label>
+
+                {% if erro_foto %}
+                <div class="alert py-2 px-3 mb-2"
+                     style="background: rgba(180,40,40,0.1); border: 1px solid rgba(180,40,40,0.3);
+                            color: #7f1d1d; border-radius: 10px; font-size: 0.85rem;">
+                    ⚠️ {{ erro_foto }}
+                </div>
+                {% endif %}
+
+                <div id="areaUpload" onclick="document.getElementById('inputFoto').click()"
+                     style="border: 2px dashed rgba(31,77,53,0.25); border-radius: 12px;
+                            padding: 24px 16px; text-align: center; cursor: pointer;
+                            background: rgba(255,255,255,0.5); transition: all 0.2s ease;">
+                    <i class="bi bi-camera" style="font-size: 2rem; color: var(--verde-medio); display: block; margin-bottom: 8px;"></i>
+                    <span id="textoUpload" style="color: var(--verde-medio); font-size: 0.88rem; font-weight: 500;">
+                        Clique para adicionar foto
+                    </span>
+                    <div style="color: rgba(0,0,0,0.35); font-size: 0.75rem; margin-top: 4px;">
+                        JPG, PNG ou WEBP · máx. 8 MB
+                    </div>
+                </div>
+
+                <input type="file" id="inputFoto" name="foto"
+                       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                       style="display: none;">
+
+                <!-- Preview da foto selecionada -->
+                <div id="previewContainer" style="display: none; margin-top: 12px; position: relative;">
+                    <img id="previewImg"
+                         style="width: 100%; max-height: 220px; object-fit: contain;
+                                border-radius: 10px; border: 1px solid rgba(31,77,53,0.15);
+                                background: rgba(255,255,255,0.6);">
+                    <button type="button" onclick="removerFoto()"
+                            style="position: absolute; top: 8px; right: 8px;
+                                   background: rgba(180,40,40,0.8); color: white;
+                                   border: none; border-radius: 50%; width: 28px; height: 28px;
+                                   font-size: 0.9rem; cursor: pointer; line-height: 1;
+                                   display: flex; align-items: center; justify-content: center;">
+                        ✕
+                    </button>
+                    <div id="infoFoto" style="font-size: 0.78rem; color: var(--verde-medio);
+                                              margin-top: 6px; text-align: center;"></div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-verde">Registrar</button>
+                <a href="/encomendas" class="btn btn-secondary">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+// ── FILTRO DE MORADOR ──
+document.getElementById('campoBusca').addEventListener('input', function () {
+    const termo = this.value.toLowerCase();
+    document.querySelectorAll('#selectMorador option').forEach(opt => {
+        opt.style.display = opt.getAttribute('data-texto').includes(termo) ? '' : 'none';
+    });
+});
+
+// ── UPLOAD DE FOTO ──
+const inputFoto       = document.getElementById('inputFoto');
+const areaUpload      = document.getElementById('areaUpload');
+const previewContainer = document.getElementById('previewContainer');
+const previewImg      = document.getElementById('previewImg');
+const textoUpload     = document.getElementById('textoUpload');
+const infoFoto        = document.getElementById('infoFoto');
+
+const MAX_MB = 8;
+const MIME_OK = ['image/jpeg', 'image/png', 'image/webp'];
+
+inputFoto.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    // Validação client-side
+    if (!MIME_OK.includes(file.type)) {
+        alert('Formato não suportado. Use JPG, PNG ou WEBP.');
+        this.value = '';
+        return;
+    }
+    if (file.size > MAX_MB * 1024 * 1024) {
+        alert(`A foto deve ter no máximo ${MAX_MB} MB.`);
+        this.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        previewImg.src = e.target.result;
+        previewContainer.style.display = 'block';
+        areaUpload.style.display = 'none';
+
+        const tamanho = (file.size / 1024 / 1024).toFixed(2);
+        infoFoto.textContent = `${file.name} · ${tamanho} MB`;
+    };
+    reader.readAsDataURL(file);
+});
+
+// Arrastar e soltar
+areaUpload.addEventListener('dragover', e => {
+    e.preventDefault();
+    areaUpload.style.borderColor = 'var(--verde-claro)';
+    areaUpload.style.background = 'rgba(116,198,157,0.1)';
+});
+areaUpload.addEventListener('dragleave', () => {
+    areaUpload.style.borderColor = 'rgba(31,77,53,0.25)';
+    areaUpload.style.background = 'rgba(255,255,255,0.5)';
+});
+areaUpload.addEventListener('drop', e => {
+    e.preventDefault();
+    areaUpload.style.borderColor = 'rgba(31,77,53,0.25)';
+    areaUpload.style.background = 'rgba(255,255,255,0.5)';
+    const file = e.dataTransfer.files[0];
+    if (file) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        inputFoto.files = dt.files;
+        inputFoto.dispatchEvent(new Event('change'));
+    }
+});
+
+function removerFoto() {
+    inputFoto.value = '';
+    previewContainer.style.display = 'none';
+    areaUpload.style.display = 'block';
+}
+</script>
+{% endblock %}
