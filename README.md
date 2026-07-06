@@ -47,3 +47,15 @@ Projeto desenvolvido individualmente, incluindo:
 ## Objetivo profissional
 
 Este projeto demonstra experiência prática no desenvolvimento de aplicações web completas, desde a análise da necessidade do cliente até a entrega de uma solução utilizada em ambiente real.
+
+## Screenshots
+
+> Imagens da aplicação em funcionamento serão adicionadas aqui.
+
+## Deploy
+
+A aplicação foi configurada para execução em ambiente de produção, utilizando variáveis de ambiente para informações sensíveis e integração com banco de dados.
+
+## Observações
+
+Por se tratar de um sistema desenvolvido para uso real por cliente, informações sensíveis e dados internos não são disponibilizados publicamente.
